@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Sofia Demo</title>
+    <style>
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+      html, body {
+        width: 100%;
+        height: 100%;
+        background: #0a0a0a;
+        overflow: hidden;
+      }
+      body {
+        display: flex;
+        flex-direction: row;
+      }
+      #webpage {
+        flex: 1;
+        height: 100vh;
+        border: none;
+        background: #fff;
+      }
+      #root {
+        width: 606px;
+        min-width: 606px;
+        height: 100vh;
+        max-height: 100vh;
+        position: relative;
+        overflow-y: hidden;
+        overflow-x: hidden;
+        border-left: 1px solid rgba(255,255,255,0.08);
+        /* transform creates a new containing block for position:fixed children */
+        transform: translateZ(0);
+      }
+    </style>
+  </head>
+  <body>
+    <iframe id="webpage" src="/base-app.html"></iframe>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>

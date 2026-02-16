@@ -1,0 +1,66 @@
+/* Follow Button Styles */
+.follow-button {
+  padding: 6px 12px;
+  border-radius: 6px;
+  border: none;
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: 500;
+  transition: 0.2s;
+  color: white;
+  opacity: 1;
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.follow-button.salmon-gradient-button {
+  background: var(--color-gradient-button);
+  background-size: 200% 200%;
+  animation: orb-gradient 20s ease infinite;
+  box-shadow: 0 8px 32px rgba(236, 72, 153, 0.4);
+  color: #000000;
+  font-family: 'Gotu', cursive;
+  font-weight: 700;
+  transition: all 1s ease;
+}
+
+.follow-button.salmon-gradient-button::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 70%;
+  height: 70%;
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.follow-button.salmon-gradient-button > * {
+  position: relative;
+  z-index: 1;
+}
+
+@keyframes orb-gradient {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+.follow-button.salmon-gradient-button:hover:not(:disabled) {
+  box-shadow: 0 12px 48px rgba(236, 72, 153, 0.6);
+  transform: translateY(-2px);
+}
+
+.follow-button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.follow-button.loading {
+  opacity: 0.8;
+}

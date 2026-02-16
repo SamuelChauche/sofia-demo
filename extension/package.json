@@ -1,0 +1,111 @@
+{
+  "name": "sofia",
+  "displayName": "Sofia BETA",
+  "version": "0.2.22",
+  "description": "Transform your browsing into structured knowledge on the blockchain. AI-powered insights and web3 integration.",
+  "author": "me",
+  "scripts": {
+    "dev": "plasmo dev",
+    "build": "plasmo build --no-minify && node scripts/post-build.js",
+    "package": "plasmo package",
+    "proxy": "bun sofia-proxy/server.ts",
+    "generate-icons": "node scripts/generate-icons.js",
+    "clear:channels": "tsx background/__test__/clear-channels.ts",
+    "test:persistence": "pnpm clear:channels && tsx background/__test__/test-channel-persistence.ts",
+    "test:messages": "tsx background/__test__/test-message-reception.ts",
+    "test:all": "pnpm clear:channels && tsx background/__test__/test-channel-persistence.ts && tsx background/__test__/test-message-reception.ts"
+  },
+  "dependencies": {
+    "@0xintuition/1ui": "^0.4.1",
+    "@0xintuition/graphql": "1.0.0-alpha.0",
+    "@0xintuition/protocol": "1.0.0-alpha.3",
+    "@0xsofia/graphql": "workspace:*",
+    "@apollo/client": "^3.13.8",
+    "@dicebear/collection": "^9.2.4",
+    "@dicebear/core": "^9.2.4",
+    "@elizaos/plugin-mcp": "^1.0.8",
+    "@modelcontextprotocol/sdk": "^1.19.1",
+    "@plasmohq/storage": "^1.15.0",
+    "@tanstack/react-query": "^5.0.0",
+    "@types/ws": "^8.18.1",
+    "@wagmi/connectors": "^5.9.0",
+    "ai": "^4.3.19",
+    "cors": "^2.8.5",
+    "evt": "^2.5.9",
+    "express": "^5.1.0",
+    "framer-motion": "^12.23.24",
+    "graphql": "^16.11.0",
+    "lucide-react": "^0.525.0",
+    "mipd": "^0.0.7",
+    "node-fetch": "^3.3.2",
+    "ogl": "^1.0.11",
+    "plasmo": "0.90.5",
+    "postprocessing": "^6.37.8",
+    "react": "18.2.0",
+    "react-dom": "18.2.0",
+    "react-router-dom": "^7.7.1",
+    "tailwind": "^4.0.0",
+    "three": "^0.180.0",
+    "umami": "^2.10.0",
+    "viem": "^2.33.1",
+    "wagmi": "^2.16.0",
+    "ws": "^8.18.3"
+  },
+  "devDependencies": {
+    "@ianvs/prettier-plugin-sort-imports": "4.1.1",
+    "@parcel/config-default": "^2.15.4",
+    "@parcel/packager-css": "^2.15.4",
+    "@types/chrome": "0.0.258",
+    "@types/cors": "^2.8.19",
+    "@types/express": "^5.0.3",
+    "@types/node": "20.11.5",
+    "@types/react": "18.2.48",
+    "@types/react-dom": "18.2.18",
+    "@types/react-router-dom": "^5.3.3",
+    "idb": "^8.0.3",
+    "prettier": "3.2.4",
+    "sharp": "^0.34.5",
+    "tsx": "^4.20.6",
+    "typescript": "5.3.3"
+  },
+  "manifest": {
+    "permissions": [
+      "storage",
+      "history",
+      "tabs",
+      "activeTab",
+      "sidePanel",
+      "bookmarks",
+      "identity",
+      "offscreen"
+    ],
+    "host_permissions": [
+      "<all_urls>",
+      "https://auth.privy.io/*"
+    ],
+    "externally_connectable": {
+      "matches": [
+        "http://localhost:3000/*",
+        "https://sofia.intuition.box/*"
+      ]
+    },
+    "side_panel": {
+      "default_path": "sidepanel.html"
+    },
+    "action": {},
+    "web_accessible_resources": [
+      {
+        "resources": [
+          "public/spline-background.webm",
+          "assets/*",
+          "components/ui/*.png",
+          "components/ui/quick_action/*.svg"
+        ],
+        "matches": [
+          "<all_urls>"
+        ]
+      }
+    ]
+  },
+  "packageManager": "pnpm@10.15.1+sha512.34e538c329b5553014ca8e8f4535997f96180a1d0f614339357449935350d924e22f8614682191264ec33d1462ac21561aff97f6bb18065351c162c7e8f6de67"
+}

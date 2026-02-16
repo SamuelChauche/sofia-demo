@@ -1,0 +1,211 @@
+/**
+ * Message types for Chrome runtime communication
+ * Centralizes all message types used in the extension
+ */
+
+// Base message structure
+export interface BaseMessage {
+  type: string
+  data?: any
+  timestamp?: number
+}
+
+// Chrome runtime message types
+export type MessageType =
+  | 'GET_TAB_ID'
+  | 'PAGE_DATA'
+  | 'PAGE_DURATION'
+  | 'SCROLL_DATA'
+  | 'SEND_CHATBOT_MESSAGE'
+  | 'GET_TRACKING_STATS'
+  | 'CLEAR_TRACKING_DATA'
+  | 'GET_BOOKMARKS'
+  | 'FETCH_BOOKMARKS'
+  | 'IMPORT_SELECTED_BOOKMARKS'
+  | 'GET_HISTORY'
+  | 'STORE_BOOKMARK_TRIPLETS'
+  | 'STORE_DETECTED_TRIPLETS'
+  | 'START_PULSE_ANALYSIS'
+  | 'UPDATE_ECHO_BADGE'
+  | 'TRIPLET_PUBLISHED'
+  | 'TRIPLETS_DELETED'
+  | 'INITIALIZE_BADGE'
+  | 'AGENT_RESPONSE'
+  | 'GET_PAGE_BLOCKCHAIN_DATA'
+  | 'PAGE_ANALYSIS'
+  | 'GET_PAGE_DATA'
+  | 'GET_CLEAN_URL'
+  | 'URL_CHANGED'
+  | 'GENERATE_RECOMMENDATIONS'
+  | 'WALLET_CONNECTED'
+  | 'WALLET_DISCONNECTED'
+  // 🆕 Intention Groups messages
+  | 'GET_INTENTION_GROUPS'
+  | 'GET_GROUP_DETAILS'
+  | 'GET_USER_XP'
+  | 'CERTIFY_URL'
+  | 'REMOVE_URL_FROM_GROUP'
+  | 'DELETE_GROUP'
+  | 'UPDATE_GROUP_LEVEL'
+  | 'GET_LEVEL_UP_COST'
+  | 'LEVEL_UP_GROUP'
+  | 'PREVIEW_LEVEL_UP'
+  | 'AMPLIFY_GROUP'
+  | 'TRACK_URL'
+  | 'FORCE_FLUSH_TRACKER'
+  // Deep link from share page
+  | 'DEEP_LINK_PROFILE'
+  // Wallet bridge messages
+  | 'WALLET_REQUEST'
+  | 'WALLET_EVENT'
+
+// Specific message interfaces
+export interface ChromeMessage extends BaseMessage {
+  type: MessageType
+  pageLoadTime?: number
+  // Additional properties for specific message types
+  text?: string
+  triplets?: any[]
+  metadata?: any
+  timestamp?: number
+  payload?: any
+  walletAddress?: string
+  // 🆕 Intention Groups properties
+  groupId?: string
+  url?: string
+  certification?: string
+}
+
+export interface TripletMessage extends BaseMessage {
+  type: 'TRIPLET_PUBLISHED' | 'TRIPLETS_DELETED' | 'UPDATE_ECHO_BADGE'
+  tripletId?: string
+  count?: number
+}
+
+export interface BadgeMessage extends BaseMessage {
+  type: 'UPDATE_ECHO_BADGE' | 'INITIALIZE_BADGE'
+  count?: number
+}
+
+// Sofia message types (from existing messages.ts)
+export interface Triplet {
+  subject: string
+  predicate: string
+  object: string
+  objectUrl?: string
+}
+
+export interface ParsedSofiaMessage {
+  triplets: Triplet[]
+  intention: string
+  created_at: number
+  rawObjectUrl?: string
+  rawObjectDescription?: string
+  extractedAt?: number
+  sourceMessageId?: string
+}
+
+export interface SofiaMessage {
+  id: string
+  content: { text: string } | ParsedSofiaMessage
+  created_at: number
+  processed: boolean
+  type?: 'raw_message' | 'parsed_message'
+}
+
+export interface SofiaRecord {
+  messageId: string
+  content: ParsedSofiaMessage | { text: string }
+  timestamp: number
+  type: 'raw_message' | 'parsed_message'
+}
+
+// Page analysis types
+export interface PageMetadata {
+  title: string
+  description: string
+  keywords: string
+  ogTitle: string
+  ogDescription: string
+  ogType: string
+  canonical: string
+  h1: string
+}
+
+export interface PageAnalysisData {
+  rawUrl: string
+  cleanUrl: string
+  domain: string
+  pathname: string
+  metadata: PageMetadata
+  timestamp: number
+}
+
+export interface PageBlockchainData {
+  url: string
+  totalStaked: number
+  totalShares: number
+  tripletCount: number
+  lastActivity?: string
+  topPredicates: Array<{
+    predicate: string
+    count: number
+    value: number
+  }>
+  recentTriplets: Array<{
+    subject: string
+    predicate: string
+    object: string
+    timestamp: number
+    value: number
+  }>
+}
+
+export interface PageAnalysisMessage extends BaseMessage {
+  type: 'PAGE_ANALYSIS'
+  data: PageAnalysisData
+}
+
+export interface PageBlockchainMessage extends BaseMessage {
+  type: 'GET_PAGE_BLOCKCHAIN_DATA'
+  data: { url: string }
+}
+
+// Response types
+export interface MessageResponse {
+  success: boolean
+  data?: any
+  error?: string
+  status?: number
+  // Additional properties for specific responses
+  id?: string
+  count?: number
+  themes?: any[]
+  message?: string
+  url?: string
+  tabId?: number
+  recommendations?: any[]
+}
+
+// Wallet bridge message types
+export interface WalletRequestMessage extends BaseMessage {
+  type: 'WALLET_REQUEST'
+  requestId: string
+  method: string
+  params?: any[]
+}
+
+export interface WalletResponseMessage {
+  requestId: string
+  result?: any
+  error?: {
+    code: number
+    message: string
+  }
+}
+
+export interface WalletEventMessage extends BaseMessage {
+  type: 'WALLET_EVENT'
+  event: 'accountsChanged' | 'chainChanged' | 'connect' | 'disconnect'
+  data?: any
+}

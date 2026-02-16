@@ -1,0 +1,51 @@
+
+# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
+
+# dependencies
+/node_modules
+/.pnp
+.pnp.js
+
+.eliza
+.claude
+
+./home/max/Project/sofia-core/core/extension/background/oauth/config/oauth-config.ts
+
+# testing
+/coverage
+
+# misc
+.DS_Store
+*.pem
+
+# debug
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+
+# local env files
+.env*.local
+.env
+
+# Keep .env.development and .env.production in git
+!.env.development
+!.env.production
+!.env.example
+
+out/
+build/
+dist/
+releases/
+
+# plasmo
+.plasmo
+
+# typescript
+.tsbuildinfo
+
+.claude
+
+my-agent/.env
+.github/
+components/SplineBackground.tsx

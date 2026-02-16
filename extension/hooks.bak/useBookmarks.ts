@@ -1,0 +1,175 @@
+import { useState, useEffect } from 'react'
+import { BookmarkService } from '../lib/database'
+import { useWalletFromStorage } from './useWalletFromStorage'
+import { getAddress } from 'viem'
+import type { BookmarkList, BookmarkedTriplet, UseBookmarksResult } from '../types/bookmarks'
+import type { Triplet } from '../../extension/types/messages'
+import { createHookLogger } from '../lib/utils/logger'
+
+const logger = createHookLogger('useBookmarks')
+
+export const useBookmarks = (): UseBookmarksResult => {
+  const { walletAddress } = useWalletFromStorage()
+  const [lists, setLists] = useState<BookmarkList[]>([])
+  const [triplets, setTriplets] = useState<BookmarkedTriplet[]>([])
+  // State management removed - let components handle loading/error states
+
+  const refreshFromLocal = async (): Promise<{ lists: BookmarkList[], triplets: BookmarkedTriplet[] }> => {
+    if (!walletAddress) {
+      setLists([])
+      setTriplets([])
+      return { lists: [], triplets: [] }
+    }
+
+    try {
+      const checksumAddr = getAddress(walletAddress)
+      const [storedLists, storedTriplets] = await Promise.all([
+        BookmarkService.getAllLists(checksumAddr),
+        BookmarkService.getAllTriplets(checksumAddr)
+      ])
+
+      setLists(storedLists)
+      setTriplets(storedTriplets)
+
+      return { lists: storedLists, triplets: storedTriplets }
+    } catch (err) {
+      const errorMessage = err instanceof Error ? err.message : 'Unknown error occurred'
+      logger.error('Error loading bookmarks', err)
+      setLists([])
+      setTriplets([])
+      throw new Error(`Failed to load bookmarks: ${errorMessage}`)
+    }
+  }
+
+  // Auto-load on mount and when wallet changes
+  useEffect(() => {
+    refreshFromLocal()
+  }, [walletAddress])
+
+  const createList = async (name: string, description?: string): Promise<string> => {
+    if (!walletAddress) {
+      throw new Error('No wallet connected')
+    }
+    try {
+      const checksumAddr = getAddress(walletAddress)
+      const listId = await BookmarkService.createList(checksumAddr, name, description)
+      // Update local state directly
+      const newList: BookmarkList = {
+        id: listId,
+        walletAddress: checksumAddr,
+        name,
+        description: description || '',
+        tripletIds: [],
+        createdAt: Date.now(),
+        updatedAt: Date.now()
+      }
+      setLists(prev => [...prev, newList])
+      return listId
+    } catch (err) {
+      const errorMessage = err instanceof Error ? err.message : 'Failed to create list'
+      throw new Error(errorMessage)
+    }
+  }
+
+  const deleteList = async (listId: string): Promise<boolean> => {
+    try {
+      await BookmarkService.deleteList(listId)
+      setLists(prev => prev.filter(list => list.id !== listId))
+      setTriplets(prev => prev.filter(triplet => !lists.find(l => l.id === listId)?.tripletIds.includes(triplet.id)))
+      return true
+    } catch (err) {
+      const errorMessage = err instanceof Error ? err.message : 'Failed to delete list'
+      throw new Error(errorMessage)
+    }
+  }
+
+  const updateList = async (
+    listId: string, 
+    updates: Partial<Pick<BookmarkList, 'name' | 'description'>>
+  ): Promise<BookmarkList> => {
+    try {
+      await BookmarkService.updateList(listId, updates)
+      const updatedList = { ...lists.find(l => l.id === listId)!, ...updates, updatedAt: Date.now() }
+      setLists(prev => prev.map(list => 
+        list.id === listId ? updatedList : list
+      ))
+      return updatedList
+    } catch (err) {
+      const errorMessage = err instanceof Error ? err.message : 'Failed to update list'
+      throw new Error(errorMessage)
+    }
+  }
+
+  const addTripletToList = async (
+    listId: string,
+    triplet: Triplet,
+    sourceInfo: Pick<BookmarkedTriplet, 'sourceType' | 'sourceId' | 'url' | 'description' | 'sourceMessageId'>
+  ): Promise<BookmarkedTriplet> => {
+    try {
+      await BookmarkService.addTripletToList(listId, triplet, sourceInfo)
+      const tripletId = `${triplet.subject}-${triplet.predicate}-${triplet.object}-${Date.now()}`
+      const newTriplet: BookmarkedTriplet = {
+        id: tripletId,
+        triplet,
+        ...sourceInfo,
+        addedAt: Date.now()
+      }
+      setTriplets(prev => [...prev, newTriplet])
+      setLists(prev => prev.map(list => 
+        list.id === listId ? { ...list, tripletIds: [...list.tripletIds, newTriplet.id] } : list
+      ))
+      return newTriplet
+    } catch (err) {
+      const errorMessage = err instanceof Error ? err.message : 'Failed to add triplet to list'
+      throw new Error(errorMessage)
+    }
+  }
+
+  const removeTripletFromList = async (listId: string, tripletId: string): Promise<boolean> => {
+    try {
+      await BookmarkService.removeTripletFromList(listId, tripletId)
+      setTriplets(prev => prev.filter(triplet => triplet.id !== tripletId))
+      setLists(prev => prev.map(list => 
+        list.id === listId ? { ...list, tripletIds: list.tripletIds.filter(id => id !== tripletId) } : list
+      ))
+      return true
+    } catch (err) {
+      const errorMessage = err instanceof Error ? err.message : 'Failed to remove triplet from list'
+      throw new Error(errorMessage)
+    }
+  }
+
+  const getTripletsByList = (listId: string): BookmarkedTriplet[] => {
+    const list = lists.find(l => l.id === listId)
+    if (!list) return []
+    
+    return triplets.filter(t => list.tripletIds.includes(t.id))
+      .sort((a, b) => b.addedAt - a.addedAt)
+  }
+
+  const searchTriplets = (query: string): BookmarkedTriplet[] => {
+    if (!query.trim()) return triplets
+    
+    const lowercaseQuery = query.toLowerCase()
+    return triplets.filter(triplet => 
+      triplet.triplet.subject.toLowerCase().includes(lowercaseQuery) ||
+      triplet.triplet.predicate.toLowerCase().includes(lowercaseQuery) ||
+      triplet.triplet.object.toLowerCase().includes(lowercaseQuery) ||
+      (triplet.description && triplet.description.toLowerCase().includes(lowercaseQuery)) ||
+      (triplet.url && triplet.url.toLowerCase().includes(lowercaseQuery))
+    )
+  }
+
+  return {
+    lists,
+    triplets,
+    createList,
+    deleteList,
+    updateList,
+    addTripletToList,
+    removeTripletFromList,
+    getTripletsByList,
+    searchTriplets,
+    refreshFromLocal
+  }
+}

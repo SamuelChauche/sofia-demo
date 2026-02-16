@@ -1,0 +1,173 @@
+/**
+ * useGetAtomAccount Hook
+ * Integration with Intuition blockchain API to filter atoms by account type
+ * Used for searching other users in the account tab
+ */
+
+import { useState, useEffect, useCallback } from 'react'
+import { API_CONFIG } from '../lib/config/chainConfig'
+
+export interface AccountAtom {
+  id: string
+  label: string
+  termId: string
+  description?: string
+  type: string
+  createdAt: string
+  creatorId: string
+  atomType: string // Le vrai type de l'atom (Account, Thing, Caip10, etc.)
+  ipfsUri?: string // IPFS URI of the atom for triple creation
+  image?: string // ENS avatar image URL
+  data?: string // Wallet address for Account atoms
+}
+
+interface UseGetAtomAccountResult {
+  // Data state
+  accounts: AccountAtom[]
+
+  // Methods
+  searchAccounts: (query: string) => Promise<AccountAtom[]>
+  refreshAccounts: () => Promise<void>
+}
+
+/**
+ * Hook for managing account atoms from Intuition blockchain
+ * Filters atoms by type "account" for user search functionality
+ */
+export const useGetAtomAccount = (): UseGetAtomAccountResult => {
+  const [accounts, setAccounts] = useState<AccountAtom[]>([])
+  const [isLoading, setIsLoading] = useState(false)
+
+  const refreshAccounts = useCallback(async (): Promise<void> => {
+    if (isLoading) return
+
+    setIsLoading(true)
+
+    try {
+      const response = await fetch(API_CONFIG.GRAPHQL_ENDPOINT, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          query: `
+            query GetAccountAtoms {
+              atoms(where: {type: {_eq: "Account"}}, limit: 50) {
+                term_id
+                label
+                type
+                created_at
+                data
+                image
+              }
+            }
+          `,
+        }),
+      })
+
+      const jsonData = await response.json()
+
+      if (jsonData.errors) {
+        throw new Error(`GraphQL error: ${jsonData.errors[0].message}`)
+      }
+
+      const atoms = jsonData.data?.atoms || []
+
+      const mappedAccounts: AccountAtom[] = atoms.map((atom: any) => ({
+        id: atom.term_id,
+        label: atom.label || 'Unknown',
+        termId: atom.term_id,
+        description: `Account: ${atom.label}`,
+        type: 'Account' as const,
+        createdAt: atom.created_at,
+        creatorId: atom.creator_id || '',
+        atomType: atom.type,
+        ipfsUri: atom.data, // This is the IPFS URI we need!
+        image: atom.image,
+        data: atom.data
+      }))
+
+      setAccounts(mappedAccounts)
+
+    } catch (err) {
+      setAccounts([])
+    } finally {
+      setIsLoading(false)
+    }
+  }, [isLoading])
+
+  // Load once on mount
+  useEffect(() => {
+    refreshAccounts()
+  }, [])
+
+  const searchAccounts = useCallback(async (query: string): Promise<AccountAtom[]> => {
+    if (!query.trim()) return []
+
+    try {
+      const response = await fetch(API_CONFIG.GRAPHQL_ENDPOINT, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          query: `
+            query SearchAtoms($searchTerm: String!) {
+              atoms(
+                where: {
+                  _and: [
+                    { label: { _ilike: $searchTerm } },
+                    { type: { _eq: "Account" } }
+                  ]
+                }
+                limit: 20
+              ) {
+                term_id
+                label
+                type
+                created_at
+                creator_id
+                data
+                image
+              }
+            }
+          `,
+          variables: {
+            searchTerm: `%${query}%`
+          }
+        }),
+      })
+
+      const jsonData = await response.json()
+
+      if (jsonData.errors) {
+        return []
+      }
+
+      const atoms = jsonData.data?.atoms || []
+
+      return atoms.map((atom: any) => ({
+        id: atom.term_id,
+        label: atom.label || 'Unknown',
+        termId: atom.term_id,
+        description: `${atom.type}: ${atom.label}`,
+        type: 'Account' as const,
+        createdAt: atom.created_at,
+        creatorId: atom.creator_id,
+        atomType: atom.type,
+        ipfsUri: atom.data,
+        image: atom.image,
+        data: atom.data
+      }))
+
+    } catch (err) {
+      return []
+    }
+  }, [])
+
+  return {
+    accounts,
+    searchAccounts,
+    refreshAccounts
+  }
+}

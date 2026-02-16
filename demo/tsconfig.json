@@ -1,0 +1,39 @@
+{
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "~/*": ["../extension/*"]
+    },
+    "types": ["react", "react-dom"],
+    "jsx": "react-jsx",
+    "jsxImportSource": "react",
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
+    "module": "ES2020",
+    "moduleResolution": "bundler",
+    "resolveJsonModule": true,
+    "target": "ES2020",
+    "lib": ["ES2020", "DOM"],
+    "strict": false,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "noImplicitAny": false
+  },
+  "include": [
+    "src/**/*.ts",
+    "src/**/*.tsx",
+    "../extension/**/*.ts",
+    "../extension/**/*.tsx"
+  ],
+  "exclude": [
+    "node_modules",
+    "../extension/node_modules",
+    "../extension/background",
+    "../extension/background.bak",
+    "../extension/contents",
+    "../extension/contents.bak",
+    "../extension/hooks.bak",
+    "../extension/scripts",
+    "../extension/packages"
+  ]
+}

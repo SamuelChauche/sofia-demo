@@ -1,0 +1,76 @@
+# Dependencies
+node_modules/
+*/node_modules/
+
+# Lock files (garder seulement ceux utilisés)
+package-lock.json
+yarn.lock
+.pnpm-debug.log*
+
+# Build outputs
+build/
+dist/
+out/
+.plasmo/
+
+# Environment files
+.env
+.env.local
+.env.*.local
+
+# OAuth configuration (contains secrets)
+extension/background/oauth/config/oauth-config.ts
+oauth-config.ts
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Temporary files
+*.tmp
+*.temp
+.tsbuildinfonode_modules/
+
+components/SplineBackground.tsx
+
+.eliza
+.claude
+
+.env
+.internal_doc
+ 
+task
+.task
+
+/docs
+.claude
+.github
+
+# Docker build artifacts (keep start-agents.sh)
+/docker-build/agent/
+/docker-build/plugins/
+
+/phala-deploy
+
+#Docs
+TESTING_PRODUCTION.md
+DEVELOPMENT_WORKFLOW.md
+CLAUDE.md
+ANALYSIS_INDEX.md
+ENTITY_RESOLUTION_CODE_PATHS.md
+QUICK_REFERENCE_WORLD_ENTITY_ISSUES.md
+WORLD_ENTITY_MEMORY_LEAK_ANALYSIS.md
+#Version
+sofia-agent-latest.tar.gz
+
+/PLAN.md

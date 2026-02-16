@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Base | Join the Onchain Economy</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: #fff;
+      color: #0A0B0D;
+      display: flex;
+      min-height: 100vh;
+    }
+
+    /* Left sidebar */
+    .sidebar {
+      position: sticky;
+      top: 0;
+      width: 400px;
+      min-width: 400px;
+      height: 100vh;
+      padding: 48px 40px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      border-right: 1px solid #f0f0f0;
+    }
+    .logo {
+      width: 56px;
+      height: 56px;
+      background: #0052FF;
+      border-radius: 14px;
+      margin-bottom: 32px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .logo svg { width: 28px; height: 28px; }
+    .sidebar h1 {
+      font-size: 52px;
+      font-weight: 800;
+      line-height: 1.05;
+      letter-spacing: -2px;
+      margin-bottom: 20px;
+    }
+    .sidebar p {
+      font-size: 17px;
+      line-height: 1.5;
+      color: #5B616E;
+      margin-bottom: 32px;
+      max-width: 320px;
+    }
+    .download-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      background: #0052FF;
+      color: #fff;
+      border: none;
+      border-radius: 100px;
+      padding: 14px 32px;
+      font-size: 17px;
+      font-weight: 600;
+      cursor: pointer;
+      text-decoration: none;
+      width: fit-content;
+      transition: background 0.2s;
+    }
+    .download-btn:hover { background: #0040CC; }
+    .qr-section {
+      margin-top: 40px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+    .qr-box {
+      width: 80px;
+      height: 80px;
+      background: #f5f5f5;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: 1px solid #e5e5e5;
+    }
+    .qr-box svg { width: 60px; height: 60px; opacity: 0.4; }
+    .qr-text {
+      font-size: 13px;
+      color: #5B616E;
+    }
+    .store-badges {
+      display: flex;
+      gap: 8px;
+      margin-top: 8px;
+    }
+    .store-badge {
+      background: #000;
+      color: #fff;
+      padding: 6px 12px;
+      border-radius: 8px;
+      font-size: 11px;
+      font-weight: 500;
+    }
+
+    /* Main content */
+    .main {
+      flex: 1;
+      overflow-y: auto;
+      padding: 48px 40px;
+    }
+
+    .hero-video {
+      width: 100%;
+      aspect-ratio: 16/9;
+      background: linear-gradient(135deg, #0052FF 0%, #0040CC 50%, #003399 100%);
+      border-radius: 20px;
+      margin-bottom: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      overflow: hidden;
+    }
+    .hero-video::after {
+      content: '';
+      position: absolute;
+      width: 80px;
+      height: 80px;
+      background: rgba(255,255,255,0.2);
+      border-radius: 50%;
+      backdrop-filter: blur(4px);
+    }
+    .hero-video .play-icon {
+      width: 0;
+      height: 0;
+      border-style: solid;
+      border-width: 18px 0 18px 32px;
+      border-color: transparent transparent transparent #fff;
+      position: relative;
+      z-index: 1;
+      margin-left: 6px;
+    }
+
+    .feature-card {
+      padding: 40px 0;
+      border-bottom: 1px solid #f0f0f0;
+    }
+    .feature-card:last-child { border-bottom: none; }
+    .feature-accent {
+      width: 40px;
+      height: 4px;
+      border-radius: 2px;
+      margin-bottom: 20px;
+    }
+    .feature-card h2 {
+      font-size: 32px;
+      font-weight: 700;
+      line-height: 1.2;
+      letter-spacing: -1px;
+      margin-bottom: 12px;
+    }
+    .feature-card p {
+      font-size: 16px;
+      line-height: 1.5;
+      color: #5B616E;
+      max-width: 480px;
+      margin-bottom: 24px;
+    }
+    .feature-img {
+      width: 100%;
+      aspect-ratio: 16/10;
+      border-radius: 16px;
+      background: #f8f8f8;
+      border: 1px solid #eee;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+    .feature-img-inner {
+      width: 90%;
+      height: 80%;
+      border-radius: 12px;
+      display: flex;
+      flex-direction: column;
+      padding: 24px;
+      gap: 12px;
+    }
+    .mock-row {
+      height: 20px;
+      border-radius: 6px;
+      opacity: 0.15;
+    }
+    .mock-row-sm { width: 60%; }
+    .mock-row-md { width: 80%; }
+    .mock-row-lg { width: 100%; }
+    .mock-card {
+      flex: 1;
+      border-radius: 12px;
+      opacity: 0.08;
+    }
+
+    /* Footer */
+    .footer {
+      padding: 40px 0;
+      margin-top: 40px;
+      border-top: 1px solid #f0f0f0;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .footer-logo {
+      width: 32px;
+      height: 32px;
+      background: #0052FF;
+      border-radius: 8px;
+    }
+    .footer-links {
+      display: flex;
+      gap: 24px;
+    }
+    .footer-links a {
+      font-size: 13px;
+      color: #5B616E;
+      text-decoration: none;
+    }
+    .footer-links a:hover { color: #0A0B0D; }
+  </style>
+</head>
+<body>
+
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <div class="logo">
+      <svg viewBox="0 0 24 24" fill="none">
+        <circle cx="12" cy="12" r="10" fill="#fff"/>
+        <path d="M12 6C8.7 6 6 8.7 6 12s2.7 6 6 6 6-2.7 6-6-2.7-6-6-6zm0 9.5c-1.93 0-3.5-1.57-3.5-3.5S10.07 8.5 12 8.5s3.5 1.57 3.5 3.5-1.57 3.5-3.5 3.5z" fill="#0052FF"/>
+      </svg>
+    </div>
+    <h1>It pays<br/>to be here</h1>
+    <p>Earn rewards, trade crypto, explore apps, and send money — all from one place. Welcome to the onchain economy.</p>
+    <a href="#" class="download-btn">Download</a>
+    <div class="qr-section">
+      <div class="qr-box">
+        <svg viewBox="0 0 24 24" fill="none">
+          <rect x="3" y="3" width="7" height="7" rx="1" stroke="#000" stroke-width="1.5"/>
+          <rect x="14" y="3" width="7" height="7" rx="1" stroke="#000" stroke-width="1.5"/>
+          <rect x="3" y="14" width="7" height="7" rx="1" stroke="#000" stroke-width="1.5"/>
+          <rect x="5" y="5" width="3" height="3" fill="#000"/>
+          <rect x="16" y="5" width="3" height="3" fill="#000"/>
+          <rect x="5" y="16" width="3" height="3" fill="#000"/>
+          <rect x="14" y="14" width="3" height="3" fill="#000"/>
+          <rect x="18" y="14" width="3" height="3" fill="#000"/>
+          <rect x="14" y="18" width="3" height="3" fill="#000"/>
+          <rect x="18" y="18" width="3" height="3" fill="#000"/>
+        </svg>
+      </div>
+      <div>
+        <div class="qr-text">Scan to download</div>
+        <div class="store-badges">
+          <span class="store-badge">App Store</span>
+          <span class="store-badge">Google Play</span>
+        </div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- Main content -->
+  <main class="main">
+    <div class="hero-video">
+      <div class="play-icon"></div>
+    </div>
+
+    <div class="feature-card">
+      <div class="feature-accent" style="background: #0052FF;"></div>
+      <h2>See what people are trading</h2>
+      <p>Follow friends and top traders. See what tokens are trending before everyone else.</p>
+      <div class="feature-img">
+        <div class="feature-img-inner" style="background: #EEF4FF;">
+          <div class="mock-row mock-row-md" style="background: #0052FF;"></div>
+          <div class="mock-row mock-row-sm" style="background: #0052FF;"></div>
+          <div class="mock-card" style="background: #0052FF;"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="feature-card">
+      <div class="feature-accent" style="background: #00B200;"></div>
+      <h2>Be early, trade instantly</h2>
+      <p>Access millions of tokens across chains. Swap instantly with low fees.</p>
+      <div class="feature-img">
+        <div class="feature-img-inner" style="background: #EEFBEE;">
+          <div class="mock-row mock-row-lg" style="background: #00B200;"></div>
+          <div class="mock-row mock-row-sm" style="background: #00B200;"></div>
+          <div class="mock-card" style="background: #00B200;"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="feature-card">
+      <div class="feature-accent" style="background: #AC00D3;"></div>
+      <h2>Earn from anything you create</h2>
+      <p>Launch tokens, mint NFTs, or build apps — and earn from every transaction.</p>
+      <div class="feature-img">
+        <div class="feature-img-inner" style="background: #F8EEFB;">
+          <div class="mock-row mock-row-md" style="background: #AC00D3;"></div>
+          <div class="mock-row mock-row-sm" style="background: #AC00D3;"></div>
+          <div class="mock-card" style="background: #AC00D3;"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="feature-card">
+      <div class="feature-accent" style="background: #E45B00;"></div>
+      <h2>Explore games, tools, and more</h2>
+      <p>Discover mini apps built on Base — from games to utilities to social experiences.</p>
+      <div class="feature-img">
+        <div class="feature-img-inner" style="background: #FFF3EE;">
+          <div class="mock-row mock-row-lg" style="background: #E45B00;"></div>
+          <div class="mock-row mock-row-sm" style="background: #E45B00;"></div>
+          <div class="mock-card" style="background: #E45B00;"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="feature-card">
+      <div class="feature-accent" style="background: #0052FF;"></div>
+      <h2>Send USDC globally for free</h2>
+      <p>Send dollars anywhere in the world, instantly, with zero fees.</p>
+      <div class="feature-img">
+        <div class="feature-img-inner" style="background: #EEF4FF;">
+          <div class="mock-row mock-row-md" style="background: #0052FF;"></div>
+          <div class="mock-row mock-row-sm" style="background: #0052FF;"></div>
+          <div class="mock-card" style="background: #0052FF;"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="feature-card">
+      <div class="feature-accent" style="background: #65D7A7;"></div>
+      <h2>Trade with friends in chat</h2>
+      <p>Send tokens, share trades, and react to your friends' moves — all in DMs.</p>
+      <div class="feature-img">
+        <div class="feature-img-inner" style="background: #EEFBF5;">
+          <div class="mock-row mock-row-lg" style="background: #65D7A7;"></div>
+          <div class="mock-row mock-row-sm" style="background: #65D7A7;"></div>
+          <div class="mock-card" style="background: #65D7A7;"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="feature-card">
+      <div class="feature-accent" style="background: #0052FF;"></div>
+      <h2>Earn more from your crypto</h2>
+      <p>Get up to 3.35% APY* on USDC. Your money works even when you don't.</p>
+      <div class="feature-img">
+        <div class="feature-img-inner" style="background: #EEF4FF;">
+          <div class="mock-row mock-row-md" style="background: #0052FF;"></div>
+          <div class="mock-row mock-row-sm" style="background: #0052FF;"></div>
+          <div class="mock-card" style="background: #0052FF;"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="footer">
+      <div class="footer-logo"></div>
+      <div class="footer-links">
+        <a href="#">Terms</a>
+        <a href="#">Privacy</a>
+        <a href="#">Disclosures</a>
+      </div>
+    </div>
+  </main>
+
+</body>
+</html>
