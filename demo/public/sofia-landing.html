@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Sofia | From Surfing the Web to Owning It</title>
+  <link rel="icon" href="/sofia-favicon.png" type="image/png" />
+  <link href="https://fonts.googleapis.com/css2?family=Overpass+Mono:wght@300..700&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    html, body {
+      width: 100%; min-height: 100%;
+      background: rgb(2, 0, 11);
+      color: #ffffff;
+      font-family: 'Overpass Mono', monospace;
+      scroll-behavior: smooth;
+      overflow-x: hidden;
+    }
+
+    /* ── Navbar ── */
+    .navbar {
+      position: fixed; top: 0; left: 0; right: 0;
+      z-index: 1000;
+      display: flex; align-items: center; justify-content: center;
+      padding: 1.5rem 2rem;
+      background: transparent;
+    }
+    .navbar img { height: 3.5rem; }
+
+    /* ── Hero ── */
+    .hero {
+      padding: 12rem 2rem 2rem;
+      text-align: center;
+      min-height: 50vh;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+    }
+    .hero h1 {
+      font-size: 4.2rem; font-weight: 450;
+      max-width: 900px; line-height: 1.1;
+      letter-spacing: -1px;
+      margin-bottom: 3rem;
+    }
+    .buttons-row {
+      display: flex; gap: 2rem; flex-wrap: wrap;
+      justify-content: center; margin-bottom: 6rem;
+    }
+
+    /* ── Fancy Button ── */
+    .fancy-btn {
+      position: relative; display: inline-block;
+      padding: 15px 30px;
+      border: 2px solid #fefefe;
+      text-transform: uppercase; color: #fefefe;
+      text-decoration: none; font-weight: 600; font-size: 18px;
+      font-family: 'Overpass Mono', monospace;
+      background: transparent; cursor: pointer;
+    }
+    .fancy-btn::before {
+      content: ''; position: absolute;
+      top: 6px; left: -2px;
+      width: calc(100% + 4px); height: calc(100% - 12px);
+      background: rgb(2, 0, 11);
+      transition: transform 0.3s ease-in-out;
+      transform: scaleY(1);
+    }
+    .fancy-btn:hover::before { transform: scaleY(0); }
+    .fancy-btn::after {
+      content: ''; position: absolute;
+      left: 6px; top: -2px;
+      height: calc(100% + 4px); width: calc(100% - 12px);
+      background: rgb(2, 0, 11);
+      transition: transform 0.3s ease-in-out;
+      transition-delay: 0.5s;
+      transform: scaleX(1);
+    }
+    .fancy-btn:hover::after { transform: scaleX(0); }
+    .fancy-btn span { position: relative; z-index: 3; }
+
+    /* ── Key Features Carousel ── */
+    .features { padding: 4rem 0; text-align: center; }
+    .features h2 {
+      font-size: 4rem; font-weight: 500;
+      margin-bottom: 3rem;
+    }
+    .carousel-wrapper {
+      max-width: 1000px; margin: 0 auto;
+      display: flex; flex-direction: column; gap: 2rem;
+    }
+    .carousel-card {
+      border-radius: 20px; padding: 1.5rem;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+      min-height: 500px;
+      display: flex; align-items: center; justify-content: center;
+      position: relative; overflow: hidden;
+    }
+    .carousel-card img {
+      width: 100%; max-width: 900px; height: auto;
+      display: block; object-fit: contain; border-radius: 16px;
+      opacity: 0; transition: opacity 0.5s ease;
+    }
+    .carousel-card img.active { opacity: 1; position: relative; }
+    .carousel-card img:not(.active) {
+      position: absolute; pointer-events: none;
+    }
+    .carousel-dots {
+      display: flex; gap: 0.5rem; justify-content: center;
+    }
+    .carousel-dots button {
+      width: 8px; height: 8px; border-radius: 50%;
+      background: rgba(255,255,255,0.3);
+      border: none; cursor: pointer;
+      transition: all 0.3s ease; padding: 0;
+    }
+    .carousel-dots button:hover { background: rgba(255,255,255,0.5); }
+    .carousel-dots button.active {
+      background: rgba(255,255,255,0.9);
+      width: 24px; border-radius: 4px;
+    }
+
+    /* ── Partner Logos ── */
+    .partners {
+      padding: 4rem 0; overflow: hidden;
+      position: relative;
+    }
+    .partners::before, .partners::after {
+      content: ''; position: absolute; top: 0; bottom: 0;
+      width: 100px; z-index: 2;
+      pointer-events: none;
+    }
+    .partners::before {
+      left: 0;
+      background: linear-gradient(to right, rgb(2,0,11), transparent);
+    }
+    .partners::after {
+      right: 0;
+      background: linear-gradient(to left, rgb(2,0,11), transparent);
+    }
+    .logo-track {
+      display: flex; gap: 48px;
+      animation: scroll 20s linear infinite;
+      width: max-content;
+      align-items: center;
+    }
+    .logo-track:hover { animation-play-state: paused; }
+    .logo-track img {
+      height: 28px; opacity: 0.7;
+      transition: opacity 0.3s, transform 0.3s;
+      filter: brightness(0) invert(1);
+    }
+    .logo-track img:hover { opacity: 1; transform: scale(1.1); }
+    @keyframes scroll {
+      0%   { transform: translateX(0); }
+      100% { transform: translateX(-50%); }
+    }
+
+    /* ── FAQ ── */
+    .faq { padding: 4rem 1rem; max-width: 1200px; margin: 0 auto; }
+    .faq h2 {
+      font-size: 3rem; font-weight: 700;
+      text-align: center; margin-bottom: 3rem;
+      background: linear-gradient(135deg, #ffffff 0%, #b8b8b8 100%);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .faq-list { display: flex; flex-direction: column; gap: 1rem; }
+    .faq-item {
+      border-radius: 12px; overflow: hidden;
+      background: rgba(255,255,255,0.05);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255,255,255,0.1);
+      transition: all 0.3s ease;
+    }
+    .faq-item:hover {
+      border-color: rgba(255,255,255,0.2);
+      box-shadow: 0 4px 16px rgba(0,0,0,0.2);
+    }
+    .faq-q {
+      width: 100%; display: flex;
+      justify-content: space-between; align-items: center;
+      padding: 1.5rem 2rem; background: transparent;
+      border: none; color: #fff;
+      font-size: 1.15rem; font-weight: 600;
+      text-align: left; cursor: pointer;
+      font-family: 'Overpass Mono', monospace;
+      transition: background 0.3s;
+    }
+    .faq-q:hover { background: #ffbe439c; }
+    .faq-q.active { background: rgba(255,255,255,0.08); }
+    .faq-q .icon {
+      font-size: 2rem; font-weight: 300;
+      color: rgba(255,255,255,0.7); min-width: 30px;
+      text-align: center; transition: all 0.3s;
+    }
+    .faq-a {
+      max-height: 0; overflow: hidden;
+      transition: max-height 0.3s ease, padding 0.3s ease;
+    }
+    .faq-a.open { max-height: 500px; padding: 0 2rem 1.5rem; }
+    .faq-a p {
+      margin: 20px 0; color: rgba(255,255,255,0.8);
+      font-size: 1rem; line-height: 1.6;
+    }
+    .faq-a a { color: #FFD700; font-weight: 700; text-decoration: none; }
+    .faq-a a:hover { color: #FFA500; text-decoration: underline; }
+
+    /* ── Footer ── */
+    .footer {
+      text-align: center; padding: 3rem 2rem;
+      color: rgba(255,255,255,0.4); font-size: 0.85rem;
+    }
+
+    /* ── Responsive ── */
+    @media (max-width: 768px) {
+      .hero h1 { font-size: 2rem; margin-top: 0; }
+      .features h2 { font-size: 2.5rem; }
+      .carousel-card { min-height: 250px; }
+      .fancy-btn { font-size: 14px; padding: 10px 20px; }
+      .faq h2 { font-size: 2rem; }
+      .faq-q { font-size: 1rem; padding: 1rem 1.25rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Navbar -->
+  <nav class="navbar">
+    <img src="/img/sofiaLogo.png" alt="Sofia" />
+  </nav>
+
+  <!-- Hero -->
+  <section class="hero">
+    <h1>From Surfing the Web to Owning It</h1>
+    <div class="buttons-row">
+      <a href="https://discord.gg/39RP6h4WuH" target="_blank" class="fancy-btn"><span>Discord</span></a>
+      <a href="https://tally.so/r/n9bvrY" target="_blank" class="fancy-btn"><span>Early Access</span></a>
+    </div>
+  </section>
+
+  <!-- Key Features -->
+  <section class="features">
+    <h2>Key Features</h2>
+    <div class="carousel-wrapper">
+      <div class="carousel-card" id="carousel">
+        <img src="/img/sofiascreen/Workspace-Sofia/slide1.png" class="active" alt="Slide 1" />
+        <img src="/img/sofiascreen/Workspace-Sofia/slide2.png" alt="Slide 2" />
+        <img src="/img/sofiascreen/Workspace-Sofia/slide3.png" alt="Slide 3" />
+        <img src="/img/sofiascreen/Workspace-Sofia/slide4.png" alt="Slide 4" />
+        <img src="/img/sofiascreen/Workspace-Sofia/slide5.png" alt="Slide 5" />
+        <img src="/img/sofiascreen/Workspace-Sofia/slide6.png" alt="Slide 6" />
+      </div>
+      <div class="carousel-dots" id="dots"></div>
+    </div>
+  </section>
+
+  <!-- Partners -->
+  <section class="partners">
+    <div class="logo-track" id="logoTrack">
+      <img src="/img/partners/intuitionlogo.svg" alt="Intuition" />
+      <img src="/img/partners/mastra.svg" alt="Mastra" />
+      <img src="/img/partners/gaianetlogo.png" alt="GaiaNet" />
+      <img src="/img/partners/eliza-header-logo.svg" alt="Eliza" />
+      <img src="/img/partners/colonnylogo.png" alt="Colonny" />
+      <img src="/img/partners/ollama.png" alt="Ollama" />
+    </div>
+  </section>
+
+  <!-- FAQ -->
+  <section class="faq">
+    <h2>Most Asked Questions</h2>
+    <div class="faq-list" id="faqList">
+      <div class="faq-item">
+        <button class="faq-q"><span>What is Sofia?</span><span class="icon">+</span></button>
+        <div class="faq-a"><p>Sofia transforms your online experience into verifiable proof you own. Instead of platforms exploiting your data in the shadows, Sofia helps you capture and control your digital history. Your actions become your identity, not your claims.</p></div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q"><span>Why does Sofia exist?</span><span class="icon">+</span></button>
+        <div class="faq-a"><p>Because the web has betrayed its users. Big platforms extract value from your activity while keeping you in the dark with opaque algorithms. Sofia breaks this model by giving you ownership of your story and the value you generate.</p></div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q"><span>Who is Sofia for?</span><span class="icon">+</span></button>
+        <div class="faq-a"><p>Sofia is for anyone who cares about owning their digital identity. Whether you're a creator, builder, or someone who values privacy and transparency.</p></div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q"><span>How does Sofia work?</span><span class="icon">+</span></button>
+        <div class="faq-a"><p>Sofia uses a browser extension to track your web activity (GitHub, YouTube, Figma, etc.). Your personal AI analyzes these interactions and you decide what to keep as verified proof. Everything happens locally on your device first.</p></div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q"><span>Is my data safe and private?</span><span class="icon">+</span></button>
+        <div class="faq-a"><p>Yes. Your data is processed on your device with secure technology that even the Sofia team cannot access. You choose what to share and what stays private. Our code is open-source so anyone can check.</p></div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q"><span>How can I join or contribute?</span><span class="icon">+</span></button>
+        <div class="faq-a"><p>We're building Sofia in public and welcoming early contributors. Join our <a href="https://discord.gg/39RP6h4WuH" target="_blank">Discord</a> to connect with the community.</p></div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q"><span>When will Sofia launch?</span><span class="icon">+</span></button>
+        <div class="faq-a"><p>We're actively building with our early contributor community. Join our <a href="https://discord.gg/39RP6h4WuH" target="_blank">Discord</a> to stay updated and be part of the journey from day one.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <footer class="footer">Sofia v0.2.21 BETA &mdash; Built with Mastra, GaiaNet &amp; Intuition</footer>
+
+  <script>
+    /* ── Carousel ── */
+    const slides = document.querySelectorAll('#carousel img');
+    const dotsContainer = document.getElementById('dots');
+    let current = 0, timer;
+
+    slides.forEach((_, i) => {
+      const d = document.createElement('button');
+      if (i === 0) d.classList.add('active');
+      d.addEventListener('click', () => goTo(i));
+      dotsContainer.appendChild(d);
+    });
+
+    function goTo(n) {
+      slides[current].classList.remove('active');
+      dotsContainer.children[current].classList.remove('active');
+      current = n;
+      slides[current].classList.add('active');
+      dotsContainer.children[current].classList.add('active');
+      resetTimer();
+    }
+    function next() { goTo((current + 1) % slides.length); }
+    function resetTimer() { clearInterval(timer); timer = setInterval(next, 4000); }
+    resetTimer();
+
+    const carousel = document.getElementById('carousel');
+    carousel.addEventListener('mouseenter', () => clearInterval(timer));
+    carousel.addEventListener('mouseleave', resetTimer);
+
+    /* ── Partner logo duplication for infinite scroll ── */
+    const track = document.getElementById('logoTrack');
+    track.innerHTML += track.innerHTML;
+
+    /* ── FAQ accordion ── */
+    document.querySelectorAll('.faq-q').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const answer = btn.nextElementSibling;
+        const icon = btn.querySelector('.icon');
+        const wasOpen = answer.classList.contains('open');
+
+        // Close all
+        document.querySelectorAll('.faq-a').forEach(a => a.classList.remove('open'));
+        document.querySelectorAll('.faq-q').forEach(b => {
+          b.classList.remove('active');
+          b.querySelector('.icon').textContent = '+';
+        });
+
+        if (!wasOpen) {
+          answer.classList.add('open');
+          btn.classList.add('active');
+          icon.textContent = '\u2212';
+        }
+      });
+    });
+  </script>
+</body>
+</html>

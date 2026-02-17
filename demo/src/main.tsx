@@ -38,7 +38,7 @@ if (typeof window !== 'undefined' && !window.chrome) {
       id: 'demo-extension-id',
     },
     tabs: {
-      query: (_opts: any, cb?: any) => cb?.([{ id: 1, url: 'https://join.base.app/' }]),
+      query: (_opts: any, cb?: any) => cb?.([{ id: 1, url: 'https://sofia.intuition.box/' }]),
       sendMessage: (_tabId: any, _msg: any, cb?: any) => cb?.({}),
       onUpdated: { addListener: () => {}, removeListener: () => {} },
       onActivated: { addListener: () => {}, removeListener: () => {} },
